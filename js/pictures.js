@@ -1,3 +1,5 @@
+'use strict';
+
 var COMMENTS = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -16,42 +18,8 @@ var DESCRIPTION = [
   'Вот это тачка!'
 ];
 
-var randomInteger = function (min, max) {
-  return Math.floor(min + Math.random() * (max + 1 - min));
-}
-
-var randomArrayElements = function (array, quantityElements) {
-  var clone = array.slice();
-  var runNumbers = [];
-
-  for (var i = 0; i < quantityElements; i++) {
-    var randomElement = Math.floor(Math.random() * clone.length);
-
-    runNumbers.push(clone.splice(randomElement, 1));
-  }
-
-  return runNumbers;
-}
-
-var createNumericArray = function (quantityNumbers) {
-  var array = [];
-  var randomIndex;
-  var tempVariable;
-
-  for (var i = quantityNumbers; i > 0; i--) array.push(i);
-
-  for (var i = 0; i < array.length - 1; i++) {
-    randomIndex = randomInteger(0, array.length - 1);
-    tempVariable = array[randomIndex];
-    array[randomIndex] = array[array.length - 1];
-    array[array.length - 1] = tempVariable;
-  }
-
-  return array;
-}
-
 var createObjectLibrary = function () {
-  var NUMBERS = createNumericArray(25);
+  var NUMBERS = window.utils.createNumericArray(25);
   var OBJECTS = [];
 
   for (var i = 0; i <= NUMBERS.length - 1; i++) {
@@ -59,9 +27,9 @@ var createObjectLibrary = function () {
 
     var newObject = {
       url: imageUrl,
-      likes: randomInteger(15, 200),
-      comments: randomArrayElements(COMMENTS, 2),
-      description: randomArrayElements(DESCRIPTION, 1)
+      likes: window.utils.randomInteger(15, 200),
+      comments: window.utils.randomArrayElements(COMMENTS, 2),
+      description: window.utils.randomArrayElements(DESCRIPTION, 1)
     }
 
     OBJECTS.push(newObject);
