@@ -1,13 +1,3 @@
-var randomInteger = function (min, max) {
-  var rand = min + Math.random() * (max + 1 - min);
-  return Math.floor(rand);
-}
-
-var randomArrayElement = function (array) {
-  var randomElement = Math.floor(Math.random() * array.length);
-  return randomElement;
-}
-
 var COMMENTS = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -26,52 +16,76 @@ var DESCRIPTION = [
   'Вот это тачка!'
 ];
 
-var IMAGES_URLS = [];
-
-for (var i = 1; i <= 25; i++) {
-  IMAGES_URLS.push('photos/' + i + '.jpg');
+var randomInteger = function (min, max) {
+  return Math.floor(min + Math.random() * (max + 1 - min));
 }
 
+var randomArrayElements = function (array, quantityElements) {
+  var clone = array.slice();
+  var runNumbers = [];
 
-var randomObject = function () {
-  var imageUrlRand = randomArrayElement(IMAGES_URLS);
-  var likesQuantityRand = randomInteger(15, 200);
-  var commentRand = randomArrayElement(COMMENTS);
-  var descriptionRand = randomArrayElement(DESCRIPTION);
+  for (var i = 0; i < quantityElements; i++) {
+    var randomElement = Math.floor(Math.random() * clone.length);
 
-  var newObject = {
-    imageUrl: IMAGES_URLS[imageUrlRand],
-    likesQuantity: likesQuantityRand,
-    comments: COMMENTS[commentRand],
-    description: DESCRIPTION[descriptionRand]
+    runNumbers.push(clone.splice(randomElement, 1));
   }
 
-  IMAGES_URLS.splice(imageUrlRand, 1);
-
-  return newObject;
+  return runNumbers;
 }
 
-var renderObject = function () {
+var createNumericArray = function (quantityNumbers) {
+  var array = [];
+  var randomIndex;
+  var tempVariable;
+
+  for (var i = quantityNumbers; i > 0; i--) array.push(i);
+
+  for (var i = 0; i < array.length - 1; i++) {
+    randomIndex = randomInteger(0, array.length - 1);
+    tempVariable = array[randomIndex];
+    array[randomIndex] = array[array.length - 1];
+    array[array.length - 1] = tempVariable;
+  }
+
+  return array;
+}
+
+var createObjectLibrary = function () {
+  var NUMBERS = createNumericArray(25);
+  var OBJECTS = [];
+
+  for (var i = 0; i <= NUMBERS.length - 1; i++) {
+    var imageUrl = 'photos/' + NUMBERS[i] + '.jpg';
+
+    var newObject = {
+      url: imageUrl,
+      likes: randomInteger(15, 200),
+      comments: randomArrayElements(COMMENTS, 2),
+      description: randomArrayElements(DESCRIPTION, 1)
+    }
+
+    OBJECTS.push(newObject);
+  }
+
+  return OBJECTS;
+}
+
+var renderObjects = function () {
   var pictureTemplate = document.querySelector('#picture-template').content.querySelector('.picture');
-  var pictureElement = pictureTemplate.cloneNode(true);
-  var newObject = randomObject();
-
-  pictureElement.querySelector('img').src = newObject.imageUrl;
-  pictureElement.querySelector('.picture-comments').textContent = newObject.comments;
-  pictureElement.querySelector('.picture-likes').textContent = newObject.likesQuantity;
-
-  return pictureElement;
-}
-
-var addImages = function () {
   var pictures = document.querySelector('.pictures');
-  var fragment = document.createDocumentFragment();
+  var OBJECT_LIBRARY = createObjectLibrary();
 
-  for (var i = 0; i < 25; i++) {
-    fragment.appendChild(renderObject());
+  for (var i = 0; i <= OBJECT_LIBRARY.length - 1; i++) {
+    var pictureElement = pictureTemplate.cloneNode(true);
+    var fragment = document.createDocumentFragment();
+
+    pictureElement.querySelector('img').src = OBJECT_LIBRARY[i].url;
+    pictureElement.querySelector('.picture-comments').textContent = OBJECT_LIBRARY[i].comments;
+    pictureElement.querySelector('.picture-likes').textContent = OBJECT_LIBRARY[i].likes;
+
+    fragment.appendChild(pictureElement);
+    pictures.appendChild(fragment);
   }
-
-  pictures.appendChild(fragment);
 }
 
-addImages();
+renderObjects();
